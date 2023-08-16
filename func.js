@@ -1,26 +1,24 @@
-function readDataFromFile(filePath) {
-    try {
-        const data = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(data);
-    } catch (error) {
-        console.error('Error reading file:', error.message);
-        return null;
-    }
-}
+const fs = require("fs").promises;
 
+const read = new Promise((resolve, reject) => {
+    function readData(filePath) {
+        fs.readFile(filePath, "utf-8")
+            .then(data => {
+                const parsedData = JSON.parse(data);
+                resolve(parsedData); // Resolve with the parsed data
+            })
+            .catch(error => {
+                console.log('Error reading file:', error.message);
+                reject(error);
+            });
+    }
+    
+    readData("./data.json");
+});
 
-function writeDataToFile(filePath, data) {
-    try {
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 4));
-        console.log('Data has been written to file:', filePath);
-    } catch (error) {
-        console.error('Error writing file:', error.message);
-    }
-}function writeDataToFile(filePath, data) {
-    try {
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 4));
-        console.log('Data has been written to file:', filePath);
-    } catch (error) {
-        console.error('Error writing file:', error.message);
-    }
-}
+// Usage
+read.then(data => {
+    console.log(data);
+}).catch(error => {
+    console.log('An error occurred:', error.message);
+});
