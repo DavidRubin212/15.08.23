@@ -12,13 +12,36 @@ app.get("/all-users/:id", (req, res) => {
 	res.json(users.filter((i) => i.id === req.params.id)[0]);
 });
 
-app.put("all-users/new-user/:id", (req, res) => {
-    const newUsername = req.params.id;
-    const userData = req.body;
-    res.send(newUsername)
-    res.send(userData)
+app.post("/all-users/new-user", express.json(), (req, res) => {
+    const newUser = {
+        id: req.body.id,
+        email: req.body.email,
+        password: req.body.password,
+    };
+    users.push(newUser);
 
+    // Send the updated users array as a JSON response
+    res.json(users);
+
+    console.log(newUser, users);
 });
+
+
+app.put("/all-users/:id", express.json(), (req, res) => {
+    const userId = req.params.id;
+    const updatedUserData = req.body;
+
+    for (let user of users) {
+        if (user.id === userId) {
+            Object.assign(user, updatedUserData);
+            return res.json(users);
+        }
+    }
+
+    res.status(404).json({ message: "User not found" });
+});
+
+
 
 app.get("/", (req, res) => {
 	res.send("Hello World");
